@@ -3,8 +3,8 @@ paddlepaddle>=2.4.0
 paddleocr>=2.6.0
 pytesseract>=0.3.10
 pillow>=9.0.0
-opencv-python>=4.6.0
-numpy>=1.21.0
+opencv-python>=4.5.0
+numpy>=1.19.0
 
 # 深度学习模型相关
 transformers>=4.20.0

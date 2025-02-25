@@ -13,14 +13,14 @@ AI-Doc-Ops 是一套综合性的文档处理工具集，主要用于解决文档
 自动检测文档的方向并进行校正，确保文档以正确的方向呈现。
 
 - **PaddleOCR方向检测** - 基于PaddleOCR框架的方向检测算法 (`direction_ocr_paddleocr.py`)
-- **Tesseract角度检测** - 使用Tesseract引擎的文档角度检测工具 (`litx_jiaodu_tesseract.py`)
+- **Tesseract角度检测** - 使用Tesseract引擎的文档角度检测工具 (`direction_ocr_tesseract.py`)
 
 ### 内容OCR识别 (content_ocr)
 
 将图像中的文字内容转换为可编辑的文本格式。
 
-- **豆包视觉OCR** - 基于豆包(Doubao)视觉模型的OCR功能 (`doubao_vision_ocr.py`)
-- **通义千问视觉大模型OCR** - 利用通义千问VL Max大模型进行OCR识别 (`qwen_vl_max_ocr.py`)
+- **豆包视觉OCR** - 基于豆包(Doubao)视觉模型的OCR功能 (`doubao_vision_ocr.py`)，中文效果更好
+- **通义千问视觉大模型OCR** - 利用通义千问VL Max大模型进行OCR识别 (`qwen_vl_max_ocr.py`)，英语效果更好
 
 ## 安装步骤
 
