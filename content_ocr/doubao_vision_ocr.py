@@ -114,16 +114,48 @@ class DoubaoVisionAPI:
         Returns:
             Dict: API 响应结果
         """
-        # 判断是否为URL
-        is_url = bool(urlparse(image_input).scheme)
+        # 改进URL检测方法，正确处理Windows路径
+        parsed_url = urlparse(image_input)
+        # 只有当scheme是http或https等网络协议，才认为是URL
+        # Windows路径如d:会被urlparse错误地识别为scheme
+        is_url = parsed_url.scheme in ['http', 'https']
         
-        image_data = {
-            "type": "image_url",
-            "image_url": {
-                "url": image_input if is_url else f"data:image/jpeg;base64,{self._encode_image_to_base64(image_input)}",
-                "detail": self.detail
+        print(f"输入类型: {'URL' if is_url else '本地文件'}")
+        
+        if not is_url:
+            # 打印本地文件的信息
+            print(f"本地文件路径: {image_input}")
+            print(f"文件是否存在: {os.path.exists(image_input)}")
+            if os.path.exists(image_input):
+                print(f"文件大小: {os.path.getsize(image_input)} 字节")
+        
+        # 创建图片数据
+        if is_url:
+            image_data = {
+                "type": "image_url",
+                "image_url": {
+                    "url": image_input,
+                    "detail": self.detail
+                }
             }
-        }
+            print(f"使用URL: {image_input}")
+        else:
+            # 对于本地文件，使用base64编码
+            base64_data = self._encode_image_to_base64(image_input)
+            url = f"data:image/jpeg;base64,{base64_data}"
+            image_data = {
+                "type": "image_url",
+                "image_url": {
+                    "url": url,
+                    "detail": self.detail
+                }
+            }
+            print(f"Base64编码前缀: {url[:50]}...")
+            print(f"Base64编码长度: {len(base64_data)}")
+        
+        print(f"使用模型: {self.model}")
+        print(f"详细程度: {self.detail}")
+        print(f"最大tokens: {self.max_tokens}")
         
         payload = {
             "model": self.model,
@@ -144,16 +176,30 @@ class DoubaoVisionAPI:
             ]
         }
         
+        print("准备发送请求...")
+        
         try:
             response = requests.post(
                 self.base_url,
                 headers=self.headers,
                 json=payload
             )
+            
+            print(f"响应状态码: {response.status_code}")
+            
+            # 尝试获取响应的详细内容
+            error_detail = ""
+            try:
+                error_json = response.json()
+                error_detail = f"\n详细错误: {json.dumps(error_json, ensure_ascii=False, indent=2)}"
+            except:
+                error_detail = f"\n响应内容: {response.text}"
+                
+            # 检查状态码并抛出异常
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
-            raise Exception(f"API 请求失败: {str(e)}")
+            raise Exception(f"API 请求失败: {str(e)}{error_detail}")
 
 def main():
     api_key = "c2a758e8-f351-4f35-b292-2053481e569c"
